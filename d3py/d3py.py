@@ -11,8 +11,14 @@ import templates
 
 
 class D3object(object):
-    def __init__(self, port=8000):
+    def __init__(self, port=8000, name="myplot"):
+        """
+        Sets some default values.
+        """
         self.port = port
+        self.name = name
+        self.js = ""
+        self.css = ""
 
     def serve(self):
         """
@@ -21,14 +27,15 @@ class D3object(object):
         TODO NOTE THAT THIS SHOULD BE A SEPARATE PROCESS 
         OH MY GOD!!! PLEASE SOMEONE FIX THIS IF POSS
         """
-        # PORT = 8000
+
         Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
         httpd = SocketServer.TCPServer(("", self.port), Handler)
-        print "you can find your chart at http://localhost:%s/%s/%s.html"%(self.port,self.name,self.name)
+        print "you can find your chart at http://localhost:%s/%s/%s.html"% \
+            (self.port, self.name, self.name)
         httpd.serve_forever()
-        # "python -m SimpleHTTPServer 8000"
 
-    def add_js(self,s):
+
+    def add_js(self, s):
         """
         adds a line of javascript to the js object. Tries to do
         some nice formatting
@@ -42,7 +49,7 @@ class D3object(object):
         if s.endswith(";"):
             self.js += "\n"
     
-    def add_css(self,s):
+    def add_css(self, s):
         if not (("{" in s) or ("}" in s)):
             self.css += "\t"
         self.css += s
@@ -96,7 +103,7 @@ class Figure(D3object):
         errmsg = "the %s geom requests %s which is not in our dataFrame!"
         for p in geom.params:
             if p:
-                assert p in self.data, errmsg%(geom.name, p)
+                assert p in self.data, errmsg % (geom.name, p)
         self.js += geom.js
         self.css += geom.css
     
@@ -145,13 +152,13 @@ class Figure(D3object):
         fh.write(self.js)
         fh.close()
         # write html
-        fh = open("%s/%s.html"%(self.name,self.name),'w')
+        fh = open("%s/%s.html"%(self.name, self.name),'w')
         fh.write(self.html)
         fh.close()
         # start server
         self.serve()
         # fire up a browser 
-        webbrowser.open_new_tab("d3py.html?show=%s"%name)
+        webbrowser.open_new_tab("d3py.html?show=%s"%self.name)
 
 if __name__ == "__main__":
     import numpy as np
