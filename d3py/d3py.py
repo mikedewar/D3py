@@ -11,8 +11,8 @@ import templates
 
 
 class D3object(object):
-    def __init__(self):
-        pass
+    def __init__(self, port=8000):
+        self.port = port
 
     def serve(self):
         """
@@ -21,12 +21,12 @@ class D3object(object):
         TODO NOTE THAT THIS SHOULD BE A SEPARATE PROCESS 
         OH MY GOD!!! PLEASE SOMEONE FIX THIS IF POSS
         """
-        PORT = 8000
+        # PORT = 8000
         Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-        httpd = SocketServer.TCPServer(("", PORT), Handler)
-        print "you can find your chart at http://localhost:%s/%s/%s.html"%(PORT,self.name,self.name)
+        httpd = SocketServer.TCPServer(("", self.port), Handler)
+        print "you can find your chart at http://localhost:%s/%s/%s.html"%(self.port,self.name,self.name)
         httpd.serve_forever()
-        "python -m SimpleHTTPServer 8000"
+        # "python -m SimpleHTTPServer 8000"
 
     def add_js(self,s):
         """
@@ -75,7 +75,7 @@ class Figure(D3object):
         # we start the html using a template - it's pretty simple
         self.html = templates.d3py_template
         self.html = self.html.replace("{{ name }}", name)
-        self.html = self.html.replace("{{ port }}", str(port))
+        self.html = self.html.replace("{{ port }}", str(self.port))
         # build up the basic css
         self.add_css("#chart {width: %spx; height: %spx;}"%(width, height))
         # we make some structures that all the geoms can use
