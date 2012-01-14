@@ -23,8 +23,12 @@ d3py aims to create really simple source code wherever possible, so you can go i
 Installation
 ============
 
-To install, clone this repository and install using setup.py:
-
+To install, clone this repository and install using `setup.py`. The dependencies
+are `pandas` and `numpy`. Pandas will also depend on
+[http://labix.org/python-dateutil](dateutil 1.5)
+    
+    pip install numpy
+    pip install pandas
     sudo python setup.py install
 
 An example session could like:
