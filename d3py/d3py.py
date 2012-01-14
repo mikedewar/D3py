@@ -4,25 +4,30 @@ import os
 import webbrowser
 import SimpleHTTPServer
 import SocketServer
-import subproceses
+import subprocess
 
-def serve(self):
-    """
-    start up a server to serve the files for this vis. 
-        
-    TODO NOTE THAT THIS SHOULD BE A SEPARATE PROCESS OH MY GOD!!! PLEASE SOMEONE FIX THIS IF POSS
-    """
-    PORT = 8000
-    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-    httpd = SocketServer.TCPServer(("", PORT), Handler)
-    print "you can find your chart at http://localhost:%s/%s/%s.html"%(PORT,self.name,self.name)
-    httpd.serve_forever()
-    "python -m SimpleHTTPServer 8000"
-
+import templates
 
 
 
 class D3object(object):
+    def __init__(self):
+        pass
+
+    def serve(self):
+        """
+        start up a server to serve the files for this vis. 
+        
+        TODO NOTE THAT THIS SHOULD BE A SEPARATE PROCESS 
+        OH MY GOD!!! PLEASE SOMEONE FIX THIS IF POSS
+        """
+        PORT = 8000
+        Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+        httpd = SocketServer.TCPServer(("", PORT), Handler)
+        print "you can find your chart at http://localhost:%s/%s/%s.html"%(PORT,self.name,self.name)
+        httpd.serve_forever()
+        "python -m SimpleHTTPServer 8000"
+
     def add_js(self,s):
         """
         adds a line of javascript to the js object. Tries to do
@@ -68,10 +73,7 @@ class Figure(D3object):
         self.add_js(".append('svg:svg')")
         self.add_js(".append('svg:g');")
         # we start the html using a template - it's pretty simple
-        fh = open('static/d3py_template.html')
-        self.html = fh.read()
-        fh.close()
-        self.html = self.html.replace("{{ port }}", str(port))
+        self.html = templates.d3py_template
         self.html = self.html.replace("{{ name }}", name)
         # build up the basic css
         self.add_css("#chart {width: %spx; height: %spx;}"%(width, height))

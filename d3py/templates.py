@@ -1,4 +1,4 @@
-<html>
+d3py_template = """<html>
 <head>
 	<script type="text/javascript" src="http://mbostock.github.com/d3/d3.js"></script>
 	<script type="text/javascript" src="http://localhost:{{ port }}/{{ name }}/{{ name }}.js"></script>
@@ -12,4 +12,4 @@
 	</script>
 </body>
 
-</html>
+</html>"""
