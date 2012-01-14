@@ -75,6 +75,7 @@ class Figure(D3object):
         # we start the html using a template - it's pretty simple
         self.html = templates.d3py_template
         self.html = self.html.replace("{{ name }}", name)
+        self.html = self.html.replace("{{ port }}", str(port))
         # build up the basic css
         self.add_css("#chart {width: %spx; height: %spx;}"%(width, height))
         # we make some structures that all the geoms can use
