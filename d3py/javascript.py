@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+
 class JavaScript:
     # TODO: Add a lookup function so you can easily find/edit functions/objects
     #       defined within the JavaScript object
@@ -15,7 +16,7 @@ class JavaScript:
                 raise Exception("Invalid inputed statement type")
 
     def get_object(self, name, objtype):
-        return self.objects_lookup[(name,type(objtype))]
+        return self.objects_lookup[(name, type(objtype))]
 
     def __getitem__(self, item):
         return self.statements[item]
@@ -28,7 +29,7 @@ class JavaScript:
         for item in self.statements:
             if hasattr(item, "name") and item.name:
                 # Is it necissary to compound the key with the class type?
-                objects[ (item.name, type(item.__class__)) ] = item
+                objects[(item.name, type(item.__class__))] = item
         return objects
 
     def _obj_to_statements(self, other):
@@ -46,7 +47,6 @@ class JavaScript:
             return JavaScript(self.statements + other)
         raise NotImplementedError
 
-
     def __add__(self, other):
         other = self._obj_to_statements(other)
         if isinstance(other, list):
@@ -58,39 +58,49 @@ class JavaScript:
 
     def __repr__(self):
         return self.__str__()
-    
+
     def __str__(self):
         js = ""
         for statement in self.statements:
             js += str(statement) + "\n"
         return js
 
+
 class Object:
     def __init__(self, name):
         self.name = name
         self.opts = []
-    
+
     # TODO maybe add_attribute should be add_method instead?
-    
     def add_attribute(self, name, *args):
-        self.opts.append({"name":name, "param":",".join(str(x) for x in args)})
+        self.opts.append({
+            "name": name,
+            "param": ",".join(str(x) for x in args)
+        })
         return self
 
-    def select(self, *args): 
+    def select(self, *args):
         return self.add_attribute("select", *args)
-    def selectAll(self, *args): 
+
+    def selectAll(self, *args):
         return self.add_attribute("selectAll", *args)
-    def data(self, *args): 
+
+    def data(self, *args):
         return self.add_attribute("data", *args)
-    def enter(self, *args): 
+
+    def enter(self, *args):
         return self.add_attribute("enter", *args)
-    def append(self, *args): 
+
+    def append(self, *args):
         return self.add_attribute("append", *args)
-    def attr(self, *args): 
+
+    def attr(self, *args):
         return self.add_attribute("attr", *args)
-    def id(self, *args): 
+
+    def id(self, *args):
         # TODO what's this one for then?
         return self.add_attribute("id", *args)
+
     def call(self, *args):
         return self.add_attribute("call", *args)
 
@@ -100,11 +110,11 @@ class Object:
         raise NotImplementedError
 
     def __radd__(self, other):
-        return other.__add__( self.__str__() )
+        return other.__add__(self.__str__())
 
     def __repr__(self):
         return self.__str__()
-    
+
     def __str__(self):
         obj = self.name
         for opt in self.opts:
@@ -114,26 +124,27 @@ class Object:
                 param = ",".join([str(x) for x in opt["param"]])
             else:
                 param = opt["param"]
-            obj += ".%s(%s)"%(opt["name"], param)
+            obj += ".%s(%s)" % (opt["name"], param)
         return obj
+
 
 class Function:
     def __init__(self, name, arguments, statements):
         """
         name: string
-        
+
         arguments: list of strings
-        
+
         statements: list of strings
-        
-        This ends up as 
-        
+
+        This ends up as
+
         function name(arg1, arg2, arg3){
             statement1;
             statement2;
             statement3;
         }
-        
+
         """
         self.name = name
         self.arguments = arguments
@@ -146,7 +157,10 @@ class Function:
             other = [other, ]
         elif isinstance(other, JavaScript):
             other = other.statements
-        elif isinstance(other, Function) and other.name == self.name and other.arugments == self.arguments:
+        elif isinstance(other, Function) and \
+                other.name == self.name and \
+                other.arugments == self.arguments:
+            # ^^ arugments?
             other = other.statements
         else:
             other = None
@@ -155,24 +169,26 @@ class Function:
     def __add__(self, more_statements):
         more_statements = self._obj_to_statements(more_statements)
         if isinstance(more_statements, (list, tuple)):
-            return Function(self.name, self.arguments, self.statements + more_statements)
+            return Function(self.name, self.arguments,
+                            self.statements + more_statements)
         raise NotImplementedError
 
     def __radd__(self, more_statements):
         more_statements = self._obj_to_statements(more_statements)
         if isinstance(more_statements, (list, tuple)):
-            return Function(self.name, self.arguments, more_statements + self.statements)
+            return Function(self.name, self.arguments,
+                            more_statements + self.statements)
         raise NotImplementedError
 
     def __repr__(self):
         return self.__str__()
-    
+
     def __str__(self):
         fxn = "function"
         if self.name is not None:
-            fxn += " %s"%self.name
-        fxn += "(%s) {\n"%(",".join(self.arguments or ""))
+            fxn += " %s" % self.name
+        fxn += "(%s) {\n" % (",".join(self.arguments or ""))
         for line in self.statements:
-            fxn += "\t%s\n"%str(line)
+            fxn += "\t%s\n" % str(line)
         fxn += "}\n"
         return fxn
