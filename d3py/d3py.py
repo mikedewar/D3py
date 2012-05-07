@@ -64,6 +64,7 @@ class D3object(object):
         self.save()
 
     def __enter__(self):
+        self.interactive = False
         return self
 
     def __exit__(self, ex_type, ex_value, ex_tb):
