@@ -199,8 +199,8 @@ class Figure(D3object):
                     .add_attribute("linear") \
                     .add_attribute("range",  [0, height])
                     
-                x_range = JS.Object("d3.time") \
-                    .add_attribute("scale")\
+                x_range = JS.Object("d3.scale") \
+                    .add_attribute("linear")\
                     .add_attribute("range",  [0, width])
                 
                 if min(self.data[colname]) < 0:
