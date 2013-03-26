@@ -35,8 +35,7 @@ class NetworkXFigure(Figure):
         """
         super(NetworkXFigure, self).__init__(
             name=name, width=width, height=height, 
-            interactive=interactive, font=font, logging=logging,  template=template,
-            port=port, **kwargs
+            font=font, logging=logging,  template=template, **kwargs
         )
         # store data
         self.G = graph
