@@ -21,8 +21,8 @@ class Figure(object):
         self.name = '_'.join(name.split())
         d3py_path = os.path.abspath(os.path.dirname(__file__))
         self.filemap = {
-            "static" + os.sep + "d3.js":{
-                "fd":open(d3py_path + os.sep + "d3.js","r"), 
+            os.path.join("static", "d3.js"):{
+                "fd":open(os.path.join(d3py_path,"d3.js"),"r"), 
                 "timestamp":time.time()
             },
         }
@@ -44,7 +44,7 @@ class Figure(object):
         self.css = CSS()
 
         self.html = template or "".join(open(
-            d3py_path + os.sep + 'd3py_template.html').readlines())
+            os.path.join(d3py_path, 'd3py_template.html')).readlines())
         self.js_geoms = JS.JavaScript()
         self.css_geoms = CSS()
         self.geoms = []

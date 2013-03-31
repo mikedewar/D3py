@@ -39,11 +39,11 @@ class FileSystem(deployable):
         if not os.path.exists(self.dest_dir):
             raise IOError("Destination directory, {d} , does not exist.".format(d=self.dest_dir))
         os.chdir(self.dest_dir)
-        static_dir = self.dest_dir + os.sep + "static"
+        static_dir = os.path.join(self.dest_dir, "static")
         if not os.path.exists(static_dir): 
             os.mkdir(static_dir)
         for k_filename in self.fig.filemap:
-            f = self.dest_dir + os.sep + k_filename
+            f = os.path.join(self.dest_dir, k_filename)
             with open(f, 'w',0644) as fd_out:
                 fd_in = self.fig.filemap[k_filename]["fd"]
                 fd_in.seek(0)
