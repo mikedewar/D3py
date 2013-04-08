@@ -1,9 +1,9 @@
 import pandas
 import d3py
-import util 
 
 import logging
 logging.basicConfig(level=logging.DEBUG)
+
 
 df = pandas.DataFrame(
     {
@@ -12,8 +12,17 @@ df = pandas.DataFrame(
     }
 )
 
-fig = d3py.PandasFigure(df)
-fig += d3py.Bar(x = "apple_type", y = "count", fill = "MediumAquamarine")
-fig += d3py.xAxis(x = "apple_type")
-util.display(fig)
+# use 'with' if you are writing a script and want to serve this up forever
+with d3py.PandasFigure(df) as p:
+    p += d3py.Bar(x = "apple_type", y = "count", fill = "MediumAquamarine")
+    p += d3py.xAxis(x = "apple_type")
+    p.show()
 
+# if you are writing in a terminal, use without 'with' to keep everything nice
+# and interactive
+"""
+p = d3py.PandasFigure(df)
+p += d3py.Bar(x = "apple_type", y = "count", fill = "MediumAquamarine")
+p += d3py.xAxis(x = "apple_type")
+p.show()
+"""

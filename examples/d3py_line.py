@@ -1,6 +1,5 @@
 import numpy as np
 import d3py
-import util 
 import pandas
 
 T = 5*np.pi
@@ -13,9 +12,8 @@ df = pandas.DataFrame({
     'y' : y
 })
 
-fig = d3py.PandasFigure(df, 'd3py_line', width=600, height=200)
-fig += d3py.geoms.Line('x', 'y', stroke='BlueViolet')
-fig += d3py.xAxis('x')
-fig += d3py.yAxis('y')
-
-util.display(fig)
+with d3py.PandasFigure(df, 'd3py_line', width=600, height=200) as fig:
+    fig += d3py.geoms.Line('x', 'y', stroke='BlueViolet')
+    fig += d3py.xAxis('x')
+    fig += d3py.yAxis('y')
+    fig.show()

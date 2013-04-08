@@ -1,5 +1,4 @@
 import d3py
-import util 
 import networkx as nx
 
 import logging
@@ -12,8 +11,7 @@ G.add_edge(3,2)
 G.add_edge(3,4)
 G.add_edge(4,2)
 
-fig = d3py.NetworkXFigure(G, width=500, height=500)
-fig += d3py.ForceLayout() 
-
-util.display(fig)
-# util.deploy(fig)
+# use 'with' if you are writing a script and want to serve this up forever
+with d3py.NetworkXFigure(G, width=500, height=500) as p:
+    p += d3py.ForceLayout()
+    p.show()
