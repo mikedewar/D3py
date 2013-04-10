@@ -3,7 +3,7 @@ from exceptions import NotImplementedError
 
 import logging
 
-# in support of SimplyServer 
+# in support of SimpleServer 
 import threading
 import webbrowser
 from HTTPHandler import CustomHTTPRequestHandler, ThreadedHTTPServer
@@ -23,8 +23,12 @@ class displayable():
     
     def show(self, fig):
         raise NotImplementedError
+        
+    @staticmethod
+    def default_displayable(fig):
+        return SimpleServer(fig)
 
-class SimplyServer(displayable):
+class SimpleServer(displayable):
     """
     Use Python's SimpleHTTPServer class to present this resulting d3 output
     to the user. 
@@ -32,35 +36,40 @@ class SimplyServer(displayable):
     def __init__(self, fig, host="localhost", port=8000, 
         interactive=False, logging=False):
 
-        self.fig = fig
-        self.host = host
-        self.port = port
+        self._fig = fig
+        self._host = host
+        self._port = port
         self._server_thread = None
-        self.httpd = None
+        self._httpd = None
         # interactive is True by default as this is designed to be a command line tool
         # we do not want to block interaction after plotting.
-        self.interactive = interactive
+        self._interactive = interactive
+
+    @property
+    def host(self):
+        return self._host 
+    
+    @property
+    def port(self):
+        return self._port
 
     def ion(self):
         """
         Turns interactive mode on ala pylab
         """
-        self.interactive = True
+        self._interactive = True
     
     def ioff(self):
         """
         Turns interactive mode off
         """
-        self.interactive = False
+        self._interactive = False
 
     def show(self, interactive=None):
-        self.fig.update()
-        self.fig.save()
-        self.fig.renderHtml(self.host, self.port)
         if interactive is not None:
             blocking = not interactive
         else:
-            blocking = not self.interactive
+            blocking = not self._interactive
 
         if blocking:
             self._serve(blocking=True)
@@ -74,14 +83,14 @@ class SimplyServer(displayable):
         """
         start up a server to serve the files for this vis.
         """
-        msgparams = (self.host, self.port, self.fig.name)
+        msgparams = (self.host, self.port, self._fig.name)
         url = "http://%s:%s/%s.html"%msgparams
         if self._server_thread is None or self._server_thread.active_count() == 0:
             Handler = CustomHTTPRequestHandler
-            Handler.filemap = self.fig.filemap
-            Handler.logging = self.fig.logging
+            Handler.filemap = self._fig.filemap
+            Handler.logging = self._fig.logging
             try:
-                self.httpd = ThreadedHTTPServer(("", self.port), Handler)
+                self._httpd = ThreadedHTTPServer(("", self.port), Handler)
             except Exception, e:
                 print "Exception %s"%e
                 return False
@@ -91,11 +100,11 @@ class SimplyServer(displayable):
                 print msg
                 print "Ctrl-C to stop serving the chart and quit!"
                 self._server_thread = None
-                self.httpd.serve_forever()
+                self._httpd.serve_forever()
             else:
                 logging.info('serving asynchronously on port %s'%msgparams[1])
                 self._server_thread = threading.Thread(
-                    target=self.httpd.serve_forever
+                    target=self._httpd.serve_forever
                 )
                 self._server_thread.daemon = True
                 self._server_thread.start()
@@ -104,7 +113,7 @@ class SimplyServer(displayable):
 
 
     def __enter__(self):
-        self.interactive = False
+        self._interactive = False
         return self
 
     def __exit__(self, ex_type, ex_value, ex_tb):
@@ -117,10 +126,10 @@ class SimplyServer(displayable):
 
     def _cleanup(self):
         try:
-            if self.httpd is not None:
+            if self._httpd is not None:
                 print "Shutting down httpd"
-                self.httpd.shutdown()
-                self.httpd.server_close()
+                self._httpd.shutdown()
+                self._httpd.server_close()
         except Exception, e:
             print "Error in clean-up: %s"%e
 

@@ -4,6 +4,8 @@ from StringIO import StringIO
 import time
 import json
 import os
+import displayable
+import deployable
 
 from jinja2 import Template # well-known templating module
 
@@ -15,7 +17,8 @@ class Figure(object):
     Maintains in internal representation of d3 geometries. This implies
     an understanding of css,html and javascript. 
     """
-    def __init__(self, name, width, height, font, logging, template, **kwargs):
+    def __init__(self, name, width, height, font, 
+        logging, template, server, deploy, **kwargs):
 
         # store data
         self.name = '_'.join(name.split())
@@ -57,6 +60,56 @@ class Figure(object):
         }
         kwargs = dict([(k[0].replace('_','-'), k[1]) for k in kwargs.items()])
         self.args.update(kwargs)
+        
+        if server is None: 
+            self._server = displayable.displayable.default_displayable(self)
+
+        if deploy is None:
+            self._deploy = deployable.deployable.default_deployable(self)
+
+        # assertion: All variables used by the html template are 
+        #  known. Write the html based on the template. 
+        self._save_html(self._server.host, self._server.port)
+
+
+    def __enter__(self):
+        """
+        It is important that the Figure support the python's with statement. 
+        At the moment, the heavy lifting is done by the displayable module. 
+        This stub is required, so that, the callee can use the 'with' 
+        syntax directly. 
+        """
+        return self
+    
+
+    def __exit__(self, ex_type, ex_value, ex_tb):
+        """
+        This snub is required, so that, the callee can use the with directly.
+        """
+        if ex_tb is not None:
+            print "Cleanup after exception: %s: %s"%(ex_type, ex_value)
+
+    def ion(self):
+        """
+        Turns interactive mode on ala pylab
+        """
+        self._server.ion()
+
+    def ioff(self):
+        """
+        Turns interactive mode off
+        """
+        self._server.ioff()
+
+    def show(self):
+        self.update()
+        self.save()
+        self._server.show()
+
+    def deploy(self):
+        self.update()
+        self.save()
+        self._deploy.save()
 
     def _build(self):
         logging.debug('building chart')
@@ -71,10 +124,8 @@ class Figure(object):
 
     def save(self):
         """
-        Saving the chart. We need to wait to save the html because 
-        we do not know how this will be displayed or deployed. The
-        assoicated displayable will provide the remaining information
-        when it calls renderHtml() 
+        Saving the chart. _save_html() is not called here. It relies
+        on an html template. Since all values are available during construction, __init__() calls _save_hmtl() once. 
         """
         logging.debug('saving chart')
         self._save_data()
@@ -164,10 +215,9 @@ class Figure(object):
         self.filemap[filename] = {"fd":StringIO(js),
                 "timestamp":time.time()}
 
-    def renderHtml(self, a_host, a_port):
+    def _save_html(self, a_host, a_port):
         """
         Bind a var in the html template code with that value provided. 
-        Implies all related variables defined. 
         Implies all related variables defined. 
         """
         self.html_filename = "%s.html"%self.name

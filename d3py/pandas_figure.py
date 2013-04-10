@@ -7,7 +7,8 @@ from figure import Figure
 
 class PandasFigure(Figure):
     def __init__(self, data, name="figure", width=800, height=400, 
-        font="Asap", logging=False,  template=None, **kwargs):
+        font="Asap", logging=False,  template=None, 
+        server=None, deploy=None, **kwargs):
         """
         data : dataFrame
             pandas dataFrame used for the plot. This dataFrame is column centric
@@ -29,7 +30,8 @@ class PandasFigure(Figure):
         """
         super(PandasFigure, self).__init__(
             name=name, width=width, height=height, 
-            font=font, logging=logging,  template=template, **kwargs
+            font=font, logging=logging,  template=template, 
+            server=server,deploy=None, **kwargs
         )
         # store data
         self.data = data

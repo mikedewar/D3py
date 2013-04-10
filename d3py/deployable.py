@@ -15,39 +15,35 @@ class deployable():
 
     def save(self, fig):
         raise NotImplementedError
+    
+    @staticmethod
+    def default_deployable(fig):
+        return FileSystem(fig, os.path.join(os.getcwd(), 'deploy'))
 
 class FileSystem(deployable):
     """
     Concrete class which simply saves the files to the file system
     """
-    def __init__(self, fig, dest_dir, host="localhost", port=8000, logging=False):
-        self.fig = fig
-        self.host = host
-        self.port = port
-        self.dest_dir = dest_dir
+    def __init__(self, fig, dest_dir, logging=False):
+        self._fig = fig
+        self._dest_dir = dest_dir
 
     def save(self):
         """
         Save the figure to dest_dir
         """
-        self.fig.update()
-        self.fig.save()
-        self.fig.renderHtml(self.host, self.port)
-
-        if self.dest_dir is None:
+        if self._dest_dir is None:
             raise Exception("Destination directory not defined")
-        if not os.path.exists(self.dest_dir):
-            raise IOError("Destination directory, {d} , does not exist.".format(d=self.dest_dir))
-        os.chdir(self.dest_dir)
-        static_dir = os.path.join(self.dest_dir, "static")
-        if not os.path.exists(static_dir): 
-            os.mkdir(static_dir)
-        for k_filename in self.fig.filemap:
-            f = os.path.join(self.dest_dir, k_filename)
+        static_dir = os.path.join(self._dest_dir, "static")
+        if not os.path.exists(static_dir):
+            os.makedirs(static_dir)
+        # NB: while this method makes sure we can write the static directory to the file system, figure controls the structure of the subdirectory. 
+        os.chdir(self._dest_dir)
+        for k_filename in self._fig.filemap:
+            f = os.path.join(self._dest_dir, k_filename)
             with open(f, 'w',0644) as fd_out:
-                fd_in = self.fig.filemap[k_filename]["fd"]
+                fd_in = self._fig.filemap[k_filename]["fd"]
                 fd_in.seek(0)
                 # import pdb; pdb.set_trace()
                 for line in fd_in.readlines():
                     fd_out.write(line)
-                fd_out.close()
