@@ -71,15 +71,17 @@ class Figure(object):
         It is important that the Figure support the python's with statement.
         """
         if self._server is None: 
-            self._server = displayable.displayable.default_displayable(self)
-            if hasattr(self._server,'__enter__'):
-                self._server.__enter__() 
+            self._server = displayable.displayable.default_displayable()
+        self._server.fig = self
+        if hasattr(self._server,'__enter__'):
+            self._server.__enter__() 
 
         if self._deploy is None:
-            self._deploy = deployable.deployable.default_deployable(self)
-            if hasattr(self._deploy,'__enter__'):
-                self._deploy.__enter__()
-        
+            self._deploy = deployable.deployable.default_deployable()
+        self._deploy.fig = self
+        if hasattr(self._deploy,'__enter__'):
+            self._deploy.__enter__()
+
         # assertion: All variables used by the html template are 
         #  known. Write the html based on the template. 
         self._save_html(self._server.host, self._server.port)
@@ -94,7 +96,7 @@ class Figure(object):
             self._server.__exit__(ex_type, ex_value, ex_tb)
         if hasattr(self._deploy, '__exit__'):
             self._deploy.__exit__(ex_type, ex_value, ex_tb)
-        return false 
+        return False 
 
     def ion(self):
         """
@@ -113,10 +115,10 @@ class Figure(object):
         self.save()
         self._server.show()
 
-    def deploy(self):
+    def deploy(self, ephermeral_dir=None):
         self.update()
         self.save()
-        self._deploy.save()
+        self._deploy.save(ephermeral_dir)
 
     def _build(self):
         logging.debug('building chart')

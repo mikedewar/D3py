@@ -17,21 +17,40 @@ class deployable():
         raise NotImplementedError
     
     @staticmethod
-    def default_deployable(fig):
-        return FileSystem(fig, os.path.join(os.getcwd(), 'deploy'))
+    def default_deployable():
+        return FileSystem(dest_dir=os.path.join(os.getcwd(), 'deploy'))
 
 class FileSystem(deployable):
     """
     Concrete class which simply saves the files to the file system
     """
-    def __init__(self, fig, dest_dir, logging=False):
-        self._fig = fig
+    def __init__(self, dest_dir=None, logging=False):
+        self._fig = None
         self._dest_dir = dest_dir
 
-    def save(self):
+    @property
+    def fig(self):
+        return self._fig
+
+    @fig.setter
+    def fig(self, fig):
+        self._fig = fig
+        
+    @property
+    def dest_dir(self):
+        return self._dest_dir
+        
+    @dest_dir.setter
+    def dest_dir(self, new_dir):
+        self._dest_dir = new_dir
+
+    def save(self, ephermeral_dir=None):
         """
-        Save the figure to dest_dir
+        Save the figure to dest_dir.  If the user supplies a directory,
+        via the ephermeral_dir argument, use it for this call. 
         """
+        if ephermeral_dir is not None:
+            self._dest_dir = ephermeral_dir
         if self._dest_dir is None:
             raise Exception("Destination directory not defined")
         static_dir = os.path.join(self._dest_dir, "static")

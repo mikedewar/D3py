@@ -25,18 +25,18 @@ class displayable():
         raise NotImplementedError
         
     @staticmethod
-    def default_displayable(fig):
-        return SimpleServer(fig)
+    def default_displayable():
+        return SimpleServer()
 
 class SimpleServer(displayable):
     """
     Use Python's SimpleHTTPServer class to present this resulting d3 output
     to the user. 
     """
-    def __init__(self, fig, host="localhost", port=8000, 
+    def __init__(self, host="localhost", port=8000, 
         interactive=False, logging=False):
 
-        self._fig = fig
+        self._fig = None
         self._host = host
         self._port = port
         self._server_thread = None
@@ -44,6 +44,14 @@ class SimpleServer(displayable):
         # interactive is True by default as this is designed to be a command line tool
         # we do not want to block interaction after plotting.
         self._interactive = interactive
+
+    @property
+    def fig(self):
+        return self._fig
+
+    @fig.setter
+    def fig(self, fig):
+        self._fig = fig
 
     @property
     def host(self):
