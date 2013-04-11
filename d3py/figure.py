@@ -68,10 +68,7 @@ class Figure(object):
 
     def __enter__(self):
         """
-        It is important that the Figure support the python's with statement. 
-        At the moment, the heavy lifting is done by the displayable module. 
-        This stub is required, so that, the callee can use the 'with' 
-        syntax directly. 
+        It is important that the Figure support the python's with statement.
         """
         if self._server is None: 
             self._server = displayable.displayable.default_displayable(self)
@@ -91,9 +88,12 @@ class Figure(object):
 
     def __exit__(self, ex_type, ex_value, ex_tb):
         """
-        This snub is required, so that, the callee can use the with directly.
+        required to support with statement.
         """
-        self._server.__exit__(ex_type, ex_value, ex_tb)
+        if hasattr(self._server, '__exit__'):
+            self._server.__exit__(ex_type, ex_value, ex_tb)
+        if hasattr(self._deploy, '__exit__'):
+            self._deploy.__exit__(ex_type, ex_value, ex_tb)
         return false 
 
     def ion(self):
