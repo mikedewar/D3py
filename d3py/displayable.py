@@ -118,7 +118,10 @@ class SimpleServer(displayable):
 
     def __exit__(self, ex_type, ex_value, ex_tb):
         if ex_tb is not None:
-            print "Cleanup after exception: %s: %s"%(ex_type, ex_value)
+            if ex_value is None:
+                print "Cleanup after exception: %s"%(ex_type)
+            else:
+                print "Cleanup after exception: %s: %s"%(ex_type, ex_value)
         self._cleanup()
 
     def __del__(self):

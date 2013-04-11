@@ -1,9 +1,10 @@
 import logging
 
-from StringIO import StringIO
-import time
 import json
 import os
+from StringIO import StringIO
+import time
+
 import displayable
 import deployable
 
@@ -60,16 +61,9 @@ class Figure(object):
         }
         kwargs = dict([(k[0].replace('_','-'), k[1]) for k in kwargs.items()])
         self.args.update(kwargs)
-        
-        if server is None: 
-            self._server = displayable.displayable.default_displayable(self)
-
-        if deploy is None:
-            self._deploy = deployable.deployable.default_deployable(self)
-
-        # assertion: All variables used by the html template are 
-        #  known. Write the html based on the template. 
-        self._save_html(self._server.host, self._server.port)
+    
+        self._server = server 
+        self._deploy = deploy
 
 
     def __enter__(self):
@@ -79,6 +73,19 @@ class Figure(object):
         This stub is required, so that, the callee can use the 'with' 
         syntax directly. 
         """
+        if self._server is None: 
+            self._server = displayable.displayable.default_displayable(self)
+            if hasattr(self._server,'__enter__'):
+                self._server.__enter__() 
+
+        if self._deploy is None:
+            self._deploy = deployable.deployable.default_deployable(self)
+            if hasattr(self._deploy,'__enter__'):
+                self._deploy.__enter__()
+        
+        # assertion: All variables used by the html template are 
+        #  known. Write the html based on the template. 
+        self._save_html(self._server.host, self._server.port)
         return self
     
 
@@ -86,8 +93,8 @@ class Figure(object):
         """
         This snub is required, so that, the callee can use the with directly.
         """
-        if ex_tb is not None:
-            print "Cleanup after exception: %s: %s"%(ex_type, ex_value)
+        self._server.__exit__(ex_type, ex_value, ex_tb)
+        return false 
 
     def ion(self):
         """
@@ -131,12 +138,6 @@ class Figure(object):
         self._save_data()
         self._save_css()
         self._save_js()
-
-    def _clanup(self):
-        """
-        What is the intent of this stub? see  https://github.com/mikedewar/d3py/issues/62
-        """
-        raise NotImplementedError
 
     def _set_data(self):
         self.update()
