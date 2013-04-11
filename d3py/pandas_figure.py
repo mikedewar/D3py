@@ -7,8 +7,8 @@ from figure import Figure
 
 class PandasFigure(Figure):
     def __init__(self, data, name="figure", width=800, height=400, 
-        interactive=True, font="Asap", logging=False,  template=None,
-        host="localhost", port=8000, **kwargs):
+        font="Asap", logging=False,  template=None, 
+        server=None, deploy=None, **kwargs):
         """
         data : dataFrame
             pandas dataFrame used for the plot. This dataFrame is column centric
@@ -20,9 +20,6 @@ class PandasFigure(Figure):
             width of the figure in pixels (default is 1024)
         height : int 
             height of the figure in pixels (default is 768)
-        interactive : boolean
-            set this to false if you are drawing the graph using a script and
-            not in the command line (default is True)
         font : string
             name of the font you'd like to use. See     
             http://www.google.com/webfonts for options (default is Asap)
@@ -33,8 +30,8 @@ class PandasFigure(Figure):
         """
         super(PandasFigure, self).__init__(
             name=name, width=width, height=height, 
-            interactive=interactive, font=font, logging=logging,  template=template,
-            host=host, port=port, **kwargs
+            font=font, logging=logging,  template=template, 
+            server=server,deploy=None, **kwargs
         )
         # store data
         self.data = data
