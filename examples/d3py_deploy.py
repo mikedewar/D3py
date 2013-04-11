@@ -1,6 +1,6 @@
 import pandas
 import d3py
-from d3py import deployable
+from d3py.deployable import FileSystem
 
 import logging
 
@@ -30,4 +30,4 @@ with d3py.PandasFigure(df) as p:
 
 # if you want to change the default directory, set the dest_dir argument
 # in the FileSystem constructor.  
-p2 = d3py.PandasFigure(df, deploy=deployable.FileSystem(dest_dir="/tmp"))
+p2 = d3py.PandasFigure(df, deploy=FileSystem(dest_dir="/tmp"))
