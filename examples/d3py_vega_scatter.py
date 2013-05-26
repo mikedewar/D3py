@@ -1,6 +1,6 @@
+import numpy as np
 import d3py
 import pandas as pd
-import random
 
 n = 400
 df = pd.DataFrame({'d1': np.arange(0,n),'d2': np.random.normal(0, 1, n)})
