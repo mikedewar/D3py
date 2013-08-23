@@ -14,5 +14,10 @@ setup(
     url='https://github.com/mikedewar/D3py',
     packages=['d3py', 'd3py.geoms', ],
     package_data={'d3py': ['d3.js', 'd3py_template.html']},
-    requires=['pandas', 'networkx']
+    install_requires=[
+        'ipython',
+        'networkx',
+        'numpy',
+        'pandas',
+    ]
 )
