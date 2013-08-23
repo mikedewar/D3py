@@ -1,13 +1,18 @@
-import SimpleHTTPServer
-import SocketServer
-from cStringIO import StringIO
 import sys
 
-class ThreadedHTTPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+from .compat import (
+    SimpleHTTPRequestHandler,
+    socketserver,
+    StringIO,
+    to_bytes,
+)
+
+
+class ThreadedHTTPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
     allow_reuse_address = True
 
 
-class CustomHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
         """
         We get rid of the BaseHTTPRequestHandler logging messages
@@ -39,7 +44,7 @@ class CustomHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         None, in which case the caller has nothing further to do.
 
         """
-        path = self.path[1:] #get rid of leading '/'
+        path = self.path[1:]  # get rid of leading '/'
         f = None
         ctype = self.guess_type(path)
         try:
@@ -48,19 +53,23 @@ class CustomHTTPRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             return self.list_directory()
         self.send_response(200)
         self.send_header("Content-type", ctype)
-        self.send_header("Last-Modified", self.date_time_string(self.filemap[path]["timestamp"]))
+        self.send_header("Last-Modified",
+                         self.date_time_string(
+                             self.filemap[path]["timestamp"]))
         self.end_headers()
         return f
 
     def list_directory(self):
         f = StringIO()
-        f.write('<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">')
-        f.write("<html>\n<title>Directory listing</title>\n")
-        f.write("<body>\n<h2>Directory listing</h2>\n")
-        f.write("<hr>\n<ul>\n")
-        for path, meta in self.filemap.iteritems():
-            f.write('<li><a href="%s">%s</a>\n' % (path, path))
-        f.write("</ul>\n<hr>\n</body>\n</html>\n")
+        f.write(to_bytes(
+            """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+            <html>\n<title>Directory listing</title>
+            <body>\n<h2>Directory listing</h2>
+            <hr>\n<ul>
+            """))
+        for path, meta in self.filemap.items():
+            f.write(to_bytes("<li><a href=\"%s\">%s</a>\n" % (path, path)))
+        f.write(to_bytes("</ul>\n<hr>\n</body>\n</html>\n"))
         length = f.tell()
         f.seek(0)
         self.send_response(200)

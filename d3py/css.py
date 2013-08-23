@@ -30,7 +30,7 @@ class CSS:
 
     def __add__(self, css):
         if isinstance(css, dict):
-            for selector, declarations in css.iteritems():
+            for selector, declarations in css.items():
                 try:
                     self.rules[selector].update(declarations)
                 except KeyError:
@@ -44,9 +44,9 @@ class CSS:
 
     def __str__(self):
         css = ""
-        for selector, declarations in self.rules.iteritems():
+        for selector, declarations in self.rules.items():
             css += "%s {\n" % selector
-            for prop, value in declarations.iteritems():
+            for prop, value in declarations.items():
                 if value is None:
                     value = "none"
                 css += "\t%s: %s;\n" % (prop, value)

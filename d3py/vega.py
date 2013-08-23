@@ -7,7 +7,7 @@ https://github.com/wrobstory/vincent
 
 '''
 
-from __future__ import print_function
+
 import os
 import json
 from pkg_resources import resource_string
@@ -99,7 +99,7 @@ class Vega(object):
         Ex: >>>my_vega.update_vis(height=800, width=800)
         '''
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
         self.build_vega()
@@ -121,7 +121,7 @@ class Vega(object):
 
         '''
 
-        for key, value in kwargs.iteritems():
+        for key, value in kwargs.items():
                 setattr(self, key, value)
 
         self.build_vega()
@@ -268,12 +268,12 @@ class Vega(object):
             else:
                 start, end = 0, len(data)
 
-            default_range = xrange(start, end+1, 1)
+            default_range = range(start, end+1, 1)
             values = [{"x": x, "y": y} for x, y in zip(default_range, data)]
 
         #Dicts
         if isinstance(data, dict) or isinstance(data, pd.Series):
-            values = [{"x": x, "y": y} for x, y in data.iteritems()]
+            values = [{"x": x, "y": y} for x, y in data.items()]
 
         #Dataframes
         if isinstance(data, pd.DataFrame):

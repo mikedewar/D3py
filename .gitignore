@@ -3,3 +3,4 @@ build/*
 *.sw[pno]
 *.pyc
 *.egg-info
+dist/*

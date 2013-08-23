@@ -15,4 +15,3 @@ fig += d3py.vega.Line()
 
 #Show figure
 fig.show()
-

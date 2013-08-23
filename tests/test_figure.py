@@ -1,4 +1,4 @@
-  # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 '''
 Figure Test
 -------
@@ -9,7 +9,6 @@ https://nose.readthedocs.org/en/latest/
 '''
 
 import d3py
-import nose.tools as nt
 
 
 class TestFigure():
@@ -27,9 +26,9 @@ class TestFigure():
         assert self.Figure.name == 'test_figure'
         assert self.Figure.host == 'localhost'
         assert self.Figure.port == 8000
-        assert self.Figure._server_thread == None
-        assert self.Figure.httpd == None
-        assert self.Figure.interactive == True
+        assert self.Figure._server_thread is None
+        assert self.Figure.httpd is None
+        assert self.Figure.interactive is True
         assert self.Figure.margins == {'bottom': 25, 'height': 768, 'left': 60,
                                        'right': 20, 'top': 10, 'width': 1024}
         assert self.Figure.font == 'Asap'

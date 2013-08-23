@@ -4,14 +4,14 @@ import pandas
 
 N = 500
 T = 5*np.pi
-x = np.linspace(-T,T,N)
+x = np.linspace(-T, T, N)
 y = np.sin(x)
 y0 = np.cos(x)
 
 df = pandas.DataFrame({
-    'x' : x,
-    'y' : y,
-    'y0' : y0,
+    'x': x,
+    'y': y,
+    'y0': y0,
 })
 
 with d3py.PandasFigure(df, 'd3py_area', width=500, height=250) as fig:
