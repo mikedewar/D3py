@@ -14,6 +14,6 @@ fig = d3py.PandasFigure(df, 'd3py_area', port=8080, columns=['x', 'y'])
 fig += d3py.vega.Area()
 
 #Add interpolation to figure data
-fig.vega + ({'value': 'basis'}, 'marks', 0, 'properties', 'enter', 
+fig.vega + ({'value': 'basis'}, 'marks', 0, 'properties', 'enter',
             'interpolate')
 fig.show()

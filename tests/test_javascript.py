@@ -2,6 +2,7 @@
 
 from d3py import javascript as JS
 
+
 def test_JavaScript_object_lookup():
     g = JS.Selection("g").attr("color", "red")
     j = JS.JavaScript() + g
@@ -21,5 +22,3 @@ def test_JavaScript_object_lookup():
 
 if __name__ == "__main__":
     test_JavaScript_object_lookup()
-
-

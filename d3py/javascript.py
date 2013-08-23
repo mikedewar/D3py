@@ -163,8 +163,8 @@ class Function(object):
         elif isinstance(other, Selection):
             other = [other, ]
         else:
-            print isinstance(other, Function)
-            print other.statements
+            print(isinstance(other, Function))
+            print(other.statements)
             logging.debug('failed to convert %s object:\n %s\n\n to statements'%(type(other),other))
             other = None
         return other
