@@ -47,7 +47,7 @@ class Figure(object):
             Name of the font you'd like to use. See     
             http://www.google.com/webfonts for options
         logging: 
-            Logging via the sandard Python loggin library
+            Logging via the standard Python loggin library
         template: string
             HTML template for figure. Defaults to /d3py_template (Also, when 
             building your own HTML, please see the default template for 
